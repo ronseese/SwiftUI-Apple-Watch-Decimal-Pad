@@ -180,6 +180,13 @@ public struct EnteredText: View {
                         Text(decimalSeparator)
                     }
                     .digitKeyFrame()
+                } else if style == .nonNumeric {
+                    Button(action: {
+                        text.append(decimalSeparator)
+                    }) {
+                        Text(decimalSeparator)
+                    }
+                    .digitKeyFrame()
                 } else {
                     Spacer()
                         .padding(1)

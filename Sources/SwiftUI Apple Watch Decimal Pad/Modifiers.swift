@@ -81,6 +81,7 @@ public enum TextViewAlignment {
 public enum KeyboardStyle {
     case decimal
     case numbers
+    case nonNumeric
 }
 #if DEBUG
 #if os(watchOS)
