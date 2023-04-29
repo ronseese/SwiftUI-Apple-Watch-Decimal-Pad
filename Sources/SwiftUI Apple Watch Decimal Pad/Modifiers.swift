@@ -87,15 +87,15 @@ public enum KeyboardStyle {
 #if os(watchOS)
 struct EnteredTextKeys_Previews: PreviewProvider {
     static var previews: some View {
-        EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .numbers)
+        EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .numbers, onFinishedEditing: nil)
         Group {
-            EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .decimal)
-            EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .decimal)
+            EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .decimal, onFinishedEditing: nil)
+            EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .decimal, onFinishedEditing: nil)
                 .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
         }
-        EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .decimal).previewDevice("Apple Watch Series 6 - 40mm")
-        EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .numbers).previewDevice("Apple Watch Series 3 - 38mm")
-        EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .decimal).previewDevice("Apple Watch Series 3 - 42mm")
+        EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .decimal, onFinishedEditing: nil).previewDevice("Apple Watch Series 6 - 40mm")
+        EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .numbers, onFinishedEditing: nil).previewDevice("Apple Watch Series 3 - 38mm")
+        EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .decimal, onFinishedEditing: nil).previewDevice("Apple Watch Series 3 - 42mm")
     }
 }
 #endif

@@ -8,12 +8,22 @@
 import SwiftUI
 #if os(watchOS)
 @available(watchOS 6.0, *)
+
+public extension DigiTextView {
+    func onFinishedEditing(action: @escaping (() -> Void)) -> DigiTextView {
+        var new = self
+        new.onFinishedEditing = action
+        return new
+    }
+}
+
 public struct DigiTextView: View {
     private var locale: Locale
     var style: KeyboardStyle
 	var placeholder: String
 	@Binding public var text: String
 	@State public var presentingModal: Bool
+    var onFinishedEditing: (() -> Void)?
 	
 	var align: TextViewAlignment
     public init( placeholder: String, text: Binding<String>, presentingModal:Bool, alignment: TextViewAlignment = .center,style: KeyboardStyle = .numbers, locale: Locale = .current){
@@ -39,10 +49,11 @@ public struct DigiTextView: View {
 			}
 		}.buttonStyle(TextViewStyle(alignment: align))
 		.sheet(isPresented: $presentingModal, content: {
-            EnteredText(text: $text, presentedAsModal: $presentingModal, style: self.style, locale: locale)
+            EnteredText(text: $text, presentedAsModal: $presentingModal, style: self.style, locale: locale, onFinishedEditing: onFinishedEditing)
 		})		
 	}
 }
+
 @available(watchOS 6.0, *)
 public struct EnteredText: View {
 	@Binding var text:String
@@ -50,15 +61,17 @@ public struct EnteredText: View {
     var style: KeyboardStyle
     var watchOSDimensions: CGRect?
     private var locale: Locale
+    var onFinishedEditing: (() -> Void)?
     
 	public init(text: Binding<String>, presentedAsModal:
-                Binding<Bool>, style: KeyboardStyle, locale: Locale = .current){
+                Binding<Bool>, style: KeyboardStyle, locale: Locale = .current, onFinishedEditing: (() -> Void)?){
 		_text = text
 		_presentedAsModal = presentedAsModal
         self.style = style
         self.locale = locale
         let device = WKInterfaceDevice.current()
         watchOSDimensions = device.screenBounds
+        self.onFinishedEditing = onFinishedEditing
 	}
 	public var body: some View{
 		VStack(alignment: .trailing) {
@@ -86,6 +99,9 @@ public struct EnteredText: View {
             ToolbarItem(placement: .cancellationAction){
                 Button("Done"){
                     presentedAsModal.toggle()
+                    if (self.onFinishedEditing != nil) {
+                        self.onFinishedEditing!()
+                    }
                 }
             }
         })
@@ -217,22 +233,22 @@ public struct EnteredText: View {
 #if os(watchOS)
 struct EnteredText_Previews: PreviewProvider {
 	static var previews: some View {
-        EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .numbers)
+        EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .numbers, onFinishedEditing: nil)
         Group {
-            EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .decimal)
-            EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .decimal)
+            EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .decimal, onFinishedEditing: nil)
+            EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .decimal, onFinishedEditing: nil)
                 .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
-            EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .decimal)
+            EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .decimal, onFinishedEditing: nil)
                 .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
                 .accessibilityElement(children: /*@START_MENU_TOKEN@*/.contain/*@END_MENU_TOKEN@*/)
                 
         }
-        EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .decimal).previewDevice("Apple Watch Series 6 - 40mm")
+        EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .decimal, onFinishedEditing: nil).previewDevice("Apple Watch Series 6 - 40mm")
         Group {
-            EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .numbers).previewDevice("Apple Watch Series 3 - 38mm")
-            EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .numbers).environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge).previewDevice("Apple Watch Series 3 - 38mm")
+            EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .numbers, onFinishedEditing: nil).previewDevice("Apple Watch Series 3 - 38mm")
+            EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .numbers, onFinishedEditing: nil).environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge).previewDevice("Apple Watch Series 3 - 38mm")
         }
-        EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .decimal).previewDevice("Apple Watch Series 3 - 42mm")
+        EnteredText( text: .constant(""), presentedAsModal: .constant(true), style: .decimal, onFinishedEditing: nil).previewDevice("Apple Watch Series 3 - 42mm")
 	}
 }
 
